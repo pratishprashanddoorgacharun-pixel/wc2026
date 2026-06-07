@@ -1,0 +1,641 @@
+
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+.hsh-header{display:flex;align-items:center;gap:16px;padding:1.25rem 0 1rem;border-bottom:0.5px solid var(--color-border-tertiary);margin-bottom:1.5rem}
+.hsh-logo{width:48px;height:48px;border-radius:50%;background:#E31837;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.hsh-logo svg{width:28px;height:28px;fill:#fff}
+.hsh-title{font-size:18px;font-weight:500;color:var(--color-text-primary)}
+.hsh-sub{font-size:13px;color:var(--color-text-secondary);margin-top:2px}
+.metric-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(100px,1fr));gap:10px;margin-bottom:1.5rem}
+.mc{background:var(--color-background-secondary);border-radius:var(--border-radius-md);padding:12px 14px}
+.mc-l{font-size:11px;color:var(--color-text-secondary);text-transform:uppercase;letter-spacing:.06em;margin-bottom:5px}
+.mc-v{font-size:22px;font-weight:500;color:var(--color-text-primary)}
+.tab-row{display:flex;gap:6px;margin-bottom:1rem;flex-wrap:wrap}
+.tb{font-size:13px;padding:6px 14px;border-radius:20px;border:0.5px solid var(--color-border-secondary);background:transparent;color:var(--color-text-secondary);cursor:pointer;transition:all .15s}
+.tb.active{background:#E31837;color:#fff;border-color:#E31837;font-weight:500}
+.tb:hover:not(.active){background:var(--color-background-secondary);color:var(--color-text-primary)}
+.pane{display:none}.pane.active{display:block}
+.sub-tab-row{display:flex;gap:6px;margin-bottom:1rem;flex-wrap:wrap}
+.stb{font-size:12px;padding:4px 12px;border-radius:20px;border:0.5px solid var(--color-border-secondary);background:transparent;color:var(--color-text-secondary);cursor:pointer;transition:all .15s}
+.stb.active{background:var(--color-text-primary);color:var(--color-background-primary);border-color:var(--color-text-primary)}
+.stb:hover:not(.active){background:var(--color-background-secondary)}
+.subpane{display:none}.subpane.active{display:block}
+.pick-card{background:var(--color-background-primary);border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-lg);padding:16px;margin-bottom:14px}
+.pick-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;flex-wrap:wrap;gap:8px}
+.pick-title{font-size:14px;font-weight:500;color:var(--color-text-primary)}
+.pick-dates{font-size:11px;color:var(--color-text-secondary);margin-top:2px}
+.combo-odds{background:#E31837;color:#fff;font-size:13px;font-weight:500;padding:4px 12px;border-radius:10px}
+.pick-legs{width:100%;border-collapse:collapse;margin-bottom:12px}
+.pick-legs td{padding:6px 8px;border-bottom:0.5px solid var(--color-border-tertiary);font-size:13px;color:var(--color-text-primary);vertical-align:middle}
+.pick-legs tr:last-child td{border-bottom:none}
+.leg-num{width:22px;height:22px;border-radius:50%;background:var(--color-background-secondary);display:inline-flex;align-items:center;justify-content:center;font-size:11px;font-weight:500;color:var(--color-text-secondary);flex-shrink:0}
+.leg-fix{color:var(--color-text-secondary);font-size:12px;margin-top:1px}
+.leg-odds-pill{background:#EEEDFE;color:#3C3489;font-size:12px;font-weight:500;padding:2px 8px;border-radius:8px;white-space:nowrap}
+.alt-odds{display:flex;flex-wrap:wrap;gap:4px;margin-top:5px}
+.alt-pill{background:var(--color-background-secondary);color:var(--color-text-secondary);font-size:11px;padding:2px 7px;border-radius:8px;border:0.5px solid var(--color-border-secondary);white-space:nowrap}
+.pick-footer{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;padding-top:10px;border-top:0.5px solid var(--color-border-tertiary)}
+.pick-result-label{font-size:12px;color:var(--color-text-secondary)}
+.rg{display:flex;gap:4px}
+.rb{border:0.5px solid var(--color-border-secondary);background:transparent;color:var(--color-text-secondary);border-radius:4px;padding:3px 10px;font-size:12px;cursor:pointer;transition:all .12s}
+.rb.win{background:#EAF3DE;color:#3B6D11;border-color:#97C459}
+.rb.loss{background:#FCEBEB;color:#A32D2D;border-color:#F09595}
+.rb.void{background:var(--color-background-secondary);color:var(--color-text-secondary)}
+.badge{display:inline-block;font-size:11px;font-weight:500;padding:2px 7px;border-radius:10px}
+.b-lt{background:#EEEDFE;color:#3C3489}
+.accu-card{background:var(--color-background-primary);border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-lg);padding:16px;margin-bottom:12px}
+.accu-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;flex-wrap:wrap;gap:8px}
+.accu-title{font-size:14px;font-weight:500;color:var(--color-text-primary)}
+.odds-pill{background:#EEEDFE;color:#3C3489;font-size:13px;font-weight:500;padding:3px 10px;border-radius:10px}
+.accu-legs{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:12px}
+.accu-leg{font-size:12px;padding:3px 10px;border-radius:10px;border:0.5px solid var(--color-border-secondary);color:var(--color-text-secondary)}
+.accu-footer{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px}
+.accu-status{font-size:12px;color:var(--color-text-secondary)}
+.forecast-table{width:100%;border-collapse:collapse;font-size:13px}
+.forecast-table th{text-align:left;padding:7px 10px;background:var(--color-background-secondary);color:var(--color-text-secondary);font-weight:500;border-bottom:0.5px solid var(--color-border-tertiary)}
+.forecast-table td{padding:8px 10px;border-bottom:0.5px solid var(--color-border-tertiary);color:var(--color-text-primary);vertical-align:middle}
+.forecast-table tr:hover td{background:var(--color-background-secondary)}
+.gwinner-table{width:100%;border-collapse:collapse;font-size:13px}
+.gwinner-table th{text-align:left;padding:7px 10px;background:var(--color-background-secondary);color:var(--color-text-secondary);font-weight:500;border-bottom:0.5px solid var(--color-border-tertiary)}
+.gwinner-table td{padding:8px 10px;border-bottom:0.5px solid var(--color-border-tertiary);color:var(--color-text-primary)}
+.pb-wrap{display:flex;align-items:center;gap:8px}
+.pb-bg{flex:1;height:6px;background:var(--color-background-secondary);border-radius:3px;overflow:hidden}
+.pb-fill{height:100%;background:#E31837;border-radius:3px}
+.five-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px}
+.five-card{background:var(--color-background-primary);border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-lg);padding:14px}
+.ops-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.ops-card{background:var(--color-background-secondary);border-radius:var(--border-radius-md);padding:14px}
+.ops-ct{font-size:13px;font-weight:500;color:var(--color-text-primary);margin-bottom:8px}
+.oi{display:flex;gap:8px;align-items:flex-start;margin-bottom:6px;font-size:12px;color:var(--color-text-secondary);line-height:1.5}
+.od{width:6px;height:6px;border-radius:50%;background:#E31837;margin-top:5px;flex-shrink:0}
+.info-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:1.25rem}
+.info-card{background:var(--color-background-primary);border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-lg);padding:14px}
+.info-card-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px}
+.info-card-title{font-size:13px;font-weight:500;color:var(--color-text-primary)}
+.info-card-body{font-size:12px;color:var(--color-text-secondary);line-height:1.6}
+.lt-note{font-size:11px;color:var(--color-text-secondary);padding:8px 10px;background:var(--color-background-secondary);border-radius:var(--border-radius-md);margin-bottom:12px;display:flex;align-items:center;gap:6px}
+.sec-label{font-size:13px;font-weight:500;color:var(--color-text-secondary);margin:1.25rem 0 10px;text-transform:uppercase;letter-spacing:.06em}
+.skipped-note{font-size:11px;color:var(--color-text-secondary);padding:6px 10px;border-radius:var(--border-radius-md);background:var(--color-background-secondary);border-left:2px solid var(--color-border-secondary);margin-bottom:10px}
+.disclaimer{margin-top:1.5rem;padding:12px;border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-md);font-size:11px;color:var(--color-text-secondary);line-height:1.6;display:flex;align-items:flex-start;gap:8px}
+</style>
+
+<h2 style="position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0,0,0,0)">High Stakes Hub World Cup 2026 full campaign dashboard.</h2>
+
+<div class="hsh-header">
+  <div class="hsh-logo">
+    <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8z" opacity=".3"/><path d="M12 4c-1.2 0-2.3.28-3.3.74L12 8.5l3.3-3.76C14.3 4.28 13.2 4 12 4zm5.6 2.3L14.2 10l3.4 2.5c.25-.8.4-1.63.4-2.5 0-1.3-.35-2.5-.95-3.56-.14.13-.29.23-.45.36zm-11.2 0C5.76 7.5 5.4 8.7 5.4 10c0 .87.15 1.7.4 2.5L9.2 10 6.4 6.3zm1.7 7.4l-3.1 2.3c.9 1.4 2.2 2.55 3.75 3.3L9.5 17l-1.4-3.3zm7.8 0L14.5 17l.75 2.95c1.55-.75 2.85-1.9 3.75-3.3l-3.1-2.3zM12 11l-2 1.5.75 2.25h2.5L14 12.5 12 11z"/></svg>
+  </div>
+  <div>
+    <div class="hsh-title">High Stakes Hub — World Cup 2026</div>
+    <div class="hsh-sub">Campaign Master Dashboard &nbsp;·&nbsp; Profit with precision — not luck.</div>
+  </div>
+</div>
+
+<div class="metric-row">
+  <div class="mc"><div class="mc-l">Combos</div><div class="mc-v">10</div></div>
+  <div class="mc"><div class="mc-l">Wins</div><div class="mc-v" style="color:#3B6D11" id="mWins">0</div></div>
+  <div class="mc"><div class="mc-l">Losses</div><div class="mc-v" style="color:#A32D2D" id="mLoss">0</div></div>
+  <div class="mc"><div class="mc-l">Pending</div><div class="mc-v" id="mPend">10</div></div>
+  <div class="mc"><div class="mc-l">Win rate</div><div class="mc-v" style="color:#E31837" id="mRate">—</div></div>
+  <div class="mc"><div class="mc-l">Long-term</div><div class="mc-v" id="mLT">9 open</div></div>
+</div>
+
+<div class="tab-row">
+  <button class="tb active" onclick="switchTab('picks',this)">Match picks</button>
+  <button class="tb" onclick="switchTab('longterm',this)">Long-term picks</button>
+  <button class="tb" onclick="switchTab('winners',this)">Group winners</button>
+  <button class="tb" onclick="switchTab('final5',this)">Final five</button>
+  <button class="tb" onclick="switchTab('ops',this)">Framework</button>
+</div>
+
+<!-- MATCH PICKS -->
+<div class="pane active" id="pane-picks">
+  <div class="sub-tab-row">
+    <button class="stb active" onclick="switchSub('r1',this)">Round 1</button>
+    <button class="stb" onclick="switchSub('r2',this)">Round 2</button>
+    <button class="stb" onclick="switchSub('r3',this)">Round 3</button>
+  </div>
+
+  <!-- ROUND 1 -->
+  <div class="subpane active" id="subpane-r1">
+    <div class="skipped-note"><i class="ti ti-x" aria-hidden="true" style="margin-right:4px"></i>Côte d'Ivoire v Ecuador — not played (skipped)</div>
+
+    <div class="pick-card">
+      <div class="pick-header">
+        <div><div class="pick-title">Pick 1</div><div class="pick-dates">12 Jun – 14 Jun</div></div>
+        <span class="combo-odds">Combo @ 2.12</span>
+      </div>
+      <table class="pick-legs">
+        <tr><td style="width:28px"><span class="leg-num">1</span></td><td>
+          <div style="font-weight:500">Canada — Draw No Bet</div>
+          <div class="leg-fix">Canada v Bosnia · 12 Jun 23:00</div>
+          <div class="alt-odds"><span class="leg-odds-pill">DNB @ 1.27 ✓</span><span class="alt-pill">DC @ 1.10</span></div>
+        </td></tr>
+        <tr><td><span class="leg-num">2</span></td><td>
+          <div style="font-weight:500">USA — Double Chance</div>
+          <div class="leg-fix">USA v Paraguay · 13 Jun 05:00</div>
+          <div class="alt-odds"><span class="leg-odds-pill">DC @ 1.15 ✓</span><span class="alt-pill">DNB @ 1.37</span></div>
+        </td></tr>
+        <tr><td><span class="leg-num">3</span></td><td>
+          <div style="font-weight:500">Over 1.5 FT</div>
+          <div class="leg-fix">Brazil v Morocco · 14 Jun 02:00</div>
+          <div class="alt-odds"><span class="leg-odds-pill">Over 1.5 @ 1.25 ✓</span><span class="alt-pill">Brazil DNB @ 1.18</span></div>
+        </td></tr>
+        <tr><td><span class="leg-num">4</span></td><td>
+          <div style="font-weight:500">Scotland — Draw No Bet</div>
+          <div class="leg-fix">Haiti v Scotland · 14 Jun 05:00</div>
+          <div class="alt-odds"><span class="leg-odds-pill">DNB @ 1.16 ✓</span><span class="alt-pill">FT Win @ 1.45</span></div>
+        </td></tr>
+      </table>
+      <div class="pick-footer">
+        <span class="pick-result-label" id="p1-status">4 legs · Pending</span>
+        <div class="rg"><button class="rb" id="p1-w" onclick="setPick('p1',4)">W</button><button class="rb" id="p1-l" onclick="setPick2('p1',4,'loss')">L</button><button class="rb" id="p1-v" onclick="setPick2('p1',4,'void')">V</button></div>
+      </div>
+    </div>
+
+    <div class="pick-card">
+      <div class="pick-header">
+        <div><div class="pick-title">Pick 2</div><div class="pick-dates">14 Jun – 15 Jun</div></div>
+        <span class="combo-odds">Combo @ 1.88</span>
+      </div>
+      <table class="pick-legs">
+        <tr><td style="width:28px"><span class="leg-num">1</span></td><td>
+          <div style="font-weight:500">Germany — Goals 2 or more (Half Time)</div>
+          <div class="leg-fix">Germany v Curaçao · 14 Jun 21:00</div>
+          <div class="alt-odds"><span class="leg-odds-pill">Goals HT @ 1.50 ✓</span><span class="alt-pill">FT Win @ 1.02</span><span class="alt-pill">HT Win @ 1.20</span></div>
+        </td></tr>
+        <tr><td><span class="leg-num">2</span></td><td>
+          <div style="font-weight:500">Spain — Over 2.5 FT</div>
+          <div class="leg-fix">Spain v Cape Verde · 15 Jun 20:00</div>
+          <div class="alt-odds"><span class="leg-odds-pill">Over 2.5 @ 1.25 ✓</span><span class="alt-pill">FT Win @ 1.10</span></div>
+        </td></tr>
+      </table>
+      <div class="pick-footer">
+        <span class="pick-result-label" id="p2-status">2 legs · Pending</span>
+        <div class="rg"><button class="rb" id="p2-w" onclick="setPick2('p2',2,'win')">W</button><button class="rb" id="p2-l" onclick="setPick2('p2',2,'loss')">L</button><button class="rb" id="p2-v" onclick="setPick2('p2',2,'void')">V</button></div>
+      </div>
+    </div>
+
+    <div class="pick-card">
+      <div class="pick-header">
+        <div><div class="pick-title">Pick 3</div><div class="pick-dates">16 Jun – 17 Jun</div></div>
+        <span class="combo-odds">Combo @ 2.02</span>
+      </div>
+      <table class="pick-legs">
+        <tr><td style="width:28px"><span class="leg-num">1</span></td><td>
+          <div style="font-weight:500">Over 1.5 FT</div>
+          <div class="leg-fix">France v Senegal · 16 Jun 23:00</div>
+          <div class="alt-odds"><span class="leg-odds-pill">Over 1.5 @ 1.20 ✓</span><span class="alt-pill">France FT Win @ 1.40</span></div>
+        </td></tr>
+        <tr><td><span class="leg-num">2</span></td><td>
+          <div style="font-weight:500">Argentina — FT Win</div>
+          <div class="leg-fix">Argentina v Algeria · 17 Jun 05:00</div>
+          <div class="alt-odds"><span class="leg-odds-pill">FT Win @ 1.35 ✓</span><span class="alt-pill">DNB @ 1.08</span><span class="alt-pill">Over 1.5 @ 1.20</span></div>
+        </td></tr>
+        <tr><td><span class="leg-num">3</span></td><td>
+          <div style="font-weight:500">Portugal — FT Win</div>
+          <div class="leg-fix">Portugal v Congo DR · 17 Jun 21:00</div>
+          <div class="alt-odds"><span class="leg-odds-pill">FT Win @ 1.25 ✓</span></div>
+        </td></tr>
+      </table>
+      <div class="pick-footer">
+        <span class="pick-result-label" id="p3-status">3 legs · Pending</span>
+        <div class="rg"><button class="rb" id="p3-w" onclick="setPick2('p3',3,'win')">W</button><button class="rb" id="p3-l" onclick="setPick2('p3',3,'loss')">L</button><button class="rb" id="p3-v" onclick="setPick2('p3',3,'void')">V</button></div>
+      </div>
+    </div>
+
+    <div class="pick-card">
+      <div class="pick-header">
+        <div><div class="pick-title">Switzerland v Bosnia — Standalone odds</div><div class="pick-dates">Round 2 fixture</div></div>
+      </div>
+      <table class="pick-legs">
+        <tr><td style="width:28px"><span class="leg-num">1</span></td><td>
+          <div style="font-weight:500">Switzerland — DNB / DC</div>
+          <div class="leg-fix">Switzerland v Bosnia · Round 2</div>
+          <div class="alt-odds"><span class="leg-odds-pill">DNB @ 1.17</span><span class="alt-pill">DC @ 1.10</span></div>
+        </td></tr>
+      </table>
+      <div class="pick-footer">
+        <span class="pick-result-label" id="pswi-status">Standalone · Pending</span>
+        <div class="rg"><button class="rb" id="pswi-w" onclick="setPick2('pswi',1,'win')">W</button><button class="rb" id="pswi-l" onclick="setPick2('pswi',1,'loss')">L</button><button class="rb" id="pswi-v" onclick="setPick2('pswi',1,'void')">V</button></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ROUND 2 -->
+  <div class="subpane" id="subpane-r2">
+    <div class="skipped-note"><i class="ti ti-x" aria-hidden="true" style="margin-right:4px"></i>Türkiye v Paraguay — not played (skipped)</div>
+
+    <div class="pick-card">
+      <div class="pick-header">
+        <div><div class="pick-title">Pick 4</div><div class="pick-dates">16 Jun – 17 Jun</div></div>
+        <span class="combo-odds">Combo @ 2.02</span>
+      </div>
+      <table class="pick-legs">
+        <tr><td style="width:28px"><span class="leg-num">1</span></td><td>
+          <div style="font-weight:500">USA — Draw No Bet</div>
+          <div class="leg-fix">USA v Australia · 19 Jun 23:00</div>
+          <div class="alt-odds"><span class="leg-odds-pill">DNB @ 1.26 ✓</span><span class="alt-pill">DC @ 1.10</span><span class="alt-pill">Over 1.5 @ 1.25</span></div>
+        </td></tr>
+        <tr><td><span class="leg-num">2</span></td><td>
+          <div style="font-weight:500">Over 1.5 — Half Time</div>
+          <div class="leg-fix">Brazil v Haiti · 20 Jun 04:30</div>
+          <div class="alt-odds"><span class="leg-odds-pill">Over 1.5 HT @ 1.60 ✓</span></div>
+        </td></tr>
+      </table>
+      <div class="pick-footer">
+        <span class="pick-result-label" id="p4-status">2 legs · Pending</span>
+        <div class="rg"><button class="rb" id="p4-w" onclick="setPick2('p4',2,'win')">W</button><button class="rb" id="p4-l" onclick="setPick2('p4',2,'loss')">L</button><button class="rb" id="p4-v" onclick="setPick2('p4',2,'void')">V</button></div>
+      </div>
+    </div>
+
+    <div class="pick-card">
+      <div class="pick-header">
+        <div><div class="pick-title">Pick 5</div><div class="pick-dates">20 Jun – 21 Jun</div></div>
+        <span class="combo-odds">Combo @ 2.03</span>
+      </div>
+      <table class="pick-legs">
+        <tr><td style="width:28px"><span class="leg-num">1</span></td><td>
+          <div style="font-weight:500">Over 1.5 FT</div>
+          <div class="leg-fix">Netherlands v Sweden · 20 Jun 21:00</div>
+          <div class="alt-odds"><span class="leg-odds-pill">Over 1.5 @ 1.20 ✓</span></div>
+        </td></tr>
+        <tr><td><span class="leg-num">2</span></td><td>
+          <div style="font-weight:500">Over 1.5 FT</div>
+          <div class="leg-fix">Germany v Ivory Coast · 21 Jun 00:00</div>
+          <div class="alt-odds"><span class="leg-odds-pill">Over 1.5 @ 1.15 ✓</span></div>
+        </td></tr>
+        <tr><td><span class="leg-num">3</span></td><td>
+          <div style="font-weight:500">Spain — FT Win</div>
+          <div class="leg-fix">Spain v Saudi Arabia · 21 Jun 20:00</div>
+          <div class="alt-odds"><span class="leg-odds-pill">FT Win @ 1.09 ✓</span><span class="alt-pill">FT Win @ 1.10</span></div>
+        </td></tr>
+        <tr><td><span class="leg-num">4</span></td><td>
+          <div style="font-weight:500">Belgium — FT Win</div>
+          <div class="leg-fix">Belgium v IR Iran · 21 Jun 23:00</div>
+          <div class="alt-odds"><span class="leg-odds-pill">FT Win @ 1.35 ✓</span></div>
+        </td></tr>
+      </table>
+      <div class="pick-footer">
+        <span class="pick-result-label" id="p5-status">4 legs · Pending</span>
+        <div class="rg"><button class="rb" id="p5-w" onclick="setPick2('p5',4,'win')">W</button><button class="rb" id="p5-l" onclick="setPick2('p5',4,'loss')">L</button><button class="rb" id="p5-v" onclick="setPick2('p5',4,'void')">V</button></div>
+      </div>
+    </div>
+
+    <div class="pick-card">
+      <div class="pick-header">
+        <div><div class="pick-title">Pick 6</div><div class="pick-dates">22 Jun – 23 Jun</div></div>
+        <span class="combo-odds">Combo @ 1.86</span>
+      </div>
+      <table class="pick-legs">
+        <tr><td style="width:28px"><span class="leg-num">1</span></td><td>
+          <div style="font-weight:500">Uruguay — Draw No Bet</div>
+          <div class="leg-fix">Uruguay v Cape Verde · 22 Jun 02:00</div>
+          <div class="alt-odds"><span class="leg-odds-pill">DNB @ 1.12 ✓</span></div>
+        </td></tr>
+        <tr><td><span class="leg-num">2</span></td><td>
+          <div style="font-weight:500">Argentina — Draw No Bet</div>
+          <div class="leg-fix">Argentina v Austria · 22 Jun 21:00</div>
+          <div class="alt-odds"><span class="leg-odds-pill">DNB @ 1.21 ✓</span></div>
+        </td></tr>
+        <tr><td><span class="leg-num">3</span></td><td>
+          <div style="font-weight:500">France — FT Win</div>
+          <div class="leg-fix">France v Iraq · 23 Jun 01:00</div>
+          <div class="alt-odds"><span class="leg-odds-pill">FT Win @ 1.10 ✓</span></div>
+        </td></tr>
+        <tr><td><span class="leg-num">4</span></td><td>
+          <div style="font-weight:500">Portugal — FT Win</div>
+          <div class="leg-fix">Portugal v Uzbekistan · 23 Jun 21:00</div>
+          <div class="alt-odds"><span class="leg-odds-pill">FT Win @ 1.25 ✓</span></div>
+        </td></tr>
+      </table>
+      <div class="pick-footer">
+        <span class="pick-result-label" id="p6-status">4 legs · Pending</span>
+        <div class="rg"><button class="rb" id="p6-w" onclick="setPick2('p6',4,'win')">W</button><button class="rb" id="p6-l" onclick="setPick2('p6',4,'loss')">L</button><button class="rb" id="p6-v" onclick="setPick2('p6',4,'void')">V</button></div>
+      </div>
+    </div>
+
+    <div class="pick-card">
+      <div class="pick-header">
+        <div><div class="pick-title">Pick 7</div><div class="pick-dates">23 Jun – 24 Jun</div></div>
+        <span class="combo-odds">Combo @ 1.80</span>
+      </div>
+      <table class="pick-legs">
+        <tr><td style="width:28px"><span class="leg-num">1</span></td><td>
+          <div style="font-weight:500">Portugal — FT Win</div>
+          <div class="leg-fix">Portugal v Uzbekistan · 23 Jun 21:00</div>
+          <div class="alt-odds"><span class="leg-odds-pill">FT Win @ 1.25 ✓</span></div>
+        </td></tr>
+        <tr><td><span class="leg-num">2</span></td><td>
+          <div style="font-weight:500">England — FT Win</div>
+          <div class="leg-fix">England v Ghana · 24 Jun 00:00</div>
+          <div class="alt-odds"><span class="leg-odds-pill">FT Win @ 1.30 ✓</span></div>
+        </td></tr>
+        <tr><td><span class="leg-num">3</span></td><td>
+          <div style="font-weight:500">Colombia — Draw No Bet</div>
+          <div class="leg-fix">Colombia v Congo DR · 24 Jun 06:00</div>
+          <div class="alt-odds"><span class="leg-odds-pill">DNB @ 1.11 ✓</span></div>
+        </td></tr>
+      </table>
+      <div class="pick-footer">
+        <span class="pick-result-label" id="p7-status">3 legs · Pending</span>
+        <div class="rg"><button class="rb" id="p7-w" onclick="setPick2('p7',3,'win')">W</button><button class="rb" id="p7-l" onclick="setPick2('p7',3,'loss')">L</button><button class="rb" id="p7-v" onclick="setPick2('p7',3,'void')">V</button></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ROUND 3 -->
+  <div class="subpane" id="subpane-r3">
+    <div class="pick-card">
+      <div class="pick-header">
+        <div><div class="pick-title">Pick 8</div><div class="pick-dates">25 Jun – 26 Jun</div></div>
+        <span class="combo-odds">Combo @ 1.93</span>
+      </div>
+      <table class="pick-legs">
+        <tr><td style="width:28px"><span class="leg-num">1</span></td><td>
+          <div style="font-weight:500">Morocco — Draw No Bet</div>
+          <div class="leg-fix">Morocco v Haiti · 25 Jun 02:00</div>
+          <div class="alt-odds"><span class="leg-odds-pill">DNB @ 1.07 ✓</span><span class="alt-pill">FT Win @ 1.30</span></div>
+        </td></tr>
+        <tr><td><span class="leg-num">2</span></td><td>
+          <div style="font-weight:500">Over 1.5 FT</div>
+          <div class="leg-fix">Scotland v Brazil · 25 Jun 02:00</div>
+          <div class="alt-odds"><span class="leg-odds-pill">Over 1.5 @ 1.20 ✓</span></div>
+        </td></tr>
+        <tr><td><span class="leg-num">3</span></td><td>
+          <div style="font-weight:500">Over 1.5 FT</div>
+          <div class="leg-fix">Ecuador v Germany · 26 Jun 00:00</div>
+          <div class="alt-odds"><span class="leg-odds-pill">Over 1.5 @ 1.20 ✓</span></div>
+        </td></tr>
+        <tr><td><span class="leg-num">4</span></td><td>
+          <div style="font-weight:500">Over 1.5 FT</div>
+          <div class="leg-fix">Japan v Sweden · 26 Jun 03:00</div>
+          <div class="alt-odds"><span class="leg-odds-pill">Over 1.5 @ 1.25 ✓</span></div>
+        </td></tr>
+      </table>
+      <div class="pick-footer">
+        <span class="pick-result-label" id="p8-status">4 legs · Pending</span>
+        <div class="rg"><button class="rb" id="p8-w" onclick="setPick2('p8',4,'win')">W</button><button class="rb" id="p8-l" onclick="setPick2('p8',4,'loss')">L</button><button class="rb" id="p8-v" onclick="setPick2('p8',4,'void')">V</button></div>
+      </div>
+    </div>
+
+    <div class="pick-card">
+      <div class="pick-header">
+        <div><div class="pick-title">Pick 9</div><div class="pick-dates">26 Jun – 27 Jun</div></div>
+        <span class="combo-odds">Combo @ 1.94</span>
+      </div>
+      <table class="pick-legs">
+        <tr><td style="width:28px"><span class="leg-num">1</span></td><td>
+          <div style="font-weight:500">Over 1.5 FT</div>
+          <div class="leg-fix">Türkiye v USA · 26 Jun 06:00</div>
+          <div class="alt-odds"><span class="leg-odds-pill">Over 1.5 @ 1.20 ✓</span></div>
+        </td></tr>
+        <tr><td><span class="leg-num">2</span></td><td>
+          <div style="font-weight:500">Over 1.5 FT</div>
+          <div class="leg-fix">Norway v France · 26 Jun 23:00</div>
+          <div class="alt-odds"><span class="leg-odds-pill">Over 1.5 @ 1.20 ✓</span></div>
+        </td></tr>
+        <tr><td><span class="leg-num">3</span></td><td>
+          <div style="font-weight:500">Senegal — Draw No Bet</div>
+          <div class="leg-fix">Senegal v Iraq · 26 Jun 23:00</div>
+          <div class="alt-odds"><span class="leg-odds-pill">DNB @ 1.12 ✓</span></div>
+        </td></tr>
+        <tr><td><span class="leg-num">4</span></td><td>
+          <div style="font-weight:500">Over 1.5 FT</div>
+          <div class="leg-fix">Uruguay v Spain · 27 Jun 04:00</div>
+          <div class="alt-odds"><span class="leg-odds-pill">Over 1.5 @ 1.20 ✓</span></div>
+        </td></tr>
+      </table>
+      <div class="pick-footer">
+        <span class="pick-result-label" id="p9-status">4 legs · Pending</span>
+        <div class="rg"><button class="rb" id="p9-w" onclick="setPick2('p9',4,'win')">W</button><button class="rb" id="p9-l" onclick="setPick2('p9',4,'loss')">L</button><button class="rb" id="p9-v" onclick="setPick2('p9',4,'void')">V</button></div>
+      </div>
+    </div>
+
+    <div class="pick-card">
+      <div class="pick-header">
+        <div><div class="pick-title">Pick 10</div><div class="pick-dates">28 Jun</div></div>
+        <span class="combo-odds">Combo @ 1.95</span>
+      </div>
+      <table class="pick-legs">
+        <tr><td style="width:28px"><span class="leg-num">1</span></td><td>
+          <div style="font-weight:500">England — FT Win</div>
+          <div class="leg-fix">Panama v England · 28 Jun 01:00</div>
+          <div class="alt-odds"><span class="leg-odds-pill">FT Win @ 1.30 ✓</span></div>
+        </td></tr>
+        <tr><td><span class="leg-num">2</span></td><td>
+          <div style="font-weight:500">Over 1.5 FT</div>
+          <div class="leg-fix">Colombia v Portugal · 28 Jun 03:30</div>
+          <div class="alt-odds"><span class="leg-odds-pill">Over 1.5 @ 1.25 ✓</span><span class="alt-pill">Portugal DC @ 1.15</span></div>
+        </td></tr>
+        <tr><td><span class="leg-num">3</span></td><td>
+          <div style="font-weight:500">Argentina — FT Win</div>
+          <div class="leg-fix">Jordan v Argentina · 28 Jun 06:00</div>
+          <div class="alt-odds"><span class="leg-odds-pill">FT Win @ 1.20 ✓</span></div>
+        </td></tr>
+      </table>
+      <div class="pick-footer">
+        <span class="pick-result-label" id="p10-status">3 legs · Pending</span>
+        <div class="rg"><button class="rb" id="p10-w" onclick="setPick2('p10',3,'win')">W</button><button class="rb" id="p10-l" onclick="setPick2('p10',3,'loss')">L</button><button class="rb" id="p10-v" onclick="setPick2('p10',3,'void')">V</button></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- LONG-TERM -->
+<div class="pane" id="pane-longterm">
+  <div class="info-grid">
+    <div class="info-card">
+      <div class="info-card-header">
+        <div class="info-card-title"><i class="ti ti-trophy" aria-hidden="true" style="color:#E31837;margin-right:6px;font-size:14px"></i>Favorites accumulator</div>
+        <span class="odds-pill">@ 3.65</span>
+      </div>
+      <div class="info-card-body">A 5-team group winners parlay: Brazil, France, Argentina, Portugal, England at combined odds of 3.65. All 5 legs must win.
+        <ul style="margin-top:6px;margin-left:14px"><li>Single W/L — logged as one bet</li><li>Settles only after all 3 rounds complete</li><li>No partial credit if one leg fails</li></ul>
+      </div>
+    </div>
+    <div class="info-card">
+      <div class="info-card-header">
+        <div class="info-card-title"><i class="ti ti-chart-bar" aria-hidden="true" style="color:#E31837;margin-right:6px;font-size:14px"></i>Group forecast doubles</div>
+        <span style="font-size:11px;color:var(--color-text-secondary)">8 picks</span>
+      </div>
+      <div class="info-card-body">8 separate doubles — one per group — each picking the two teams finishing top 2.
+        <ul style="margin-top:6px;margin-left:14px"><li>Individual W/L per group forecast</li><li>Both teams must qualify to win</li><li>All settle after round 3 is complete</li></ul>
+      </div>
+    </div>
+  </div>
+  <div class="lt-note"><i class="ti ti-clock" aria-hidden="true" style="color:#E31837;font-size:14px;flex-shrink:0"></i>Log results only once all 3 group stage rounds are complete and standings are finalised.</div>
+  <div class="accu-card">
+    <div class="accu-header"><div class="accu-title">Favorites accumulator — group winners</div><span class="odds-pill">@ 3.65</span></div>
+    <div class="accu-legs" id="accuLegs"></div>
+    <div class="accu-footer">
+      <span class="accu-status" id="accuStatus">All 5 legs must win · Settles after round 3</span>
+      <div class="rg"><button class="rb" id="accuW" onclick="setAccu('win')">W</button><button class="rb" id="accuL" onclick="setAccu('loss')">L</button></div>
+    </div>
+  </div>
+  <div class="sec-label">Group forecast doubles</div>
+  <table class="forecast-table">
+    <thead><tr><th>Group</th><th>Teams to qualify (top 2)</th><th>Odds</th><th>Result</th></tr></thead>
+    <tbody id="forecastBody"></tbody>
+  </table>
+</div>
+
+<!-- GROUP WINNERS -->
+<div class="pane" id="pane-winners">
+  <table class="gwinner-table">
+    <thead><tr><th>Group</th><th>Team</th><th>Odds</th><th>Implied prob.</th><th>Result</th></tr></thead>
+    <tbody id="gBody"></tbody>
+  </table>
+</div>
+
+<!-- FINAL FIVE -->
+<div class="pane" id="pane-final5">
+  <div class="five-grid" id="f5Grid"></div>
+</div>
+
+<!-- FRAMEWORK -->
+<div class="pane" id="pane-ops">
+  <div class="ops-grid">
+    <div class="ops-card">
+      <div class="ops-ct"><i class="ti ti-clock" aria-hidden="true" style="font-size:15px;margin-right:6px;color:#E31837"></i>Daily workflow</div>
+      <div class="oi"><span class="od"></span><span><span style="font-weight:500">Pre-match (24h):</span> Review line movements, confirm selections, update odds</span></div>
+      <div class="oi"><span class="od"></span><span><span style="font-weight:500">Match day (2h):</span> Final check on team news, weather, liquidity shifts</span></div>
+      <div class="oi"><span class="od"></span><span><span style="font-weight:500">Post-match:</span> Log results, update track record, prepare next brief</span></div>
+    </div>
+    <div class="ops-card">
+      <div class="ops-ct"><i class="ti ti-shield" aria-hidden="true" style="font-size:15px;margin-right:6px;color:#E31837"></i>Risk management</div>
+      <div class="oi"><span class="od"></span><span>Max stake per pick: 1–3% of bankroll (scaled by implied probability)</span></div>
+      <div class="oi"><span class="od"></span><span>Accumulator rule: never combine more than 3 picks per round</span></div>
+      <div class="oi"><span class="od"></span><span>Loss limit: 3 consecutive losses → pause and re-assess</span></div>
+      <div class="oi"><span class="od"></span><span>Profit take: at +15% net ROI, secure 50% of profits</span></div>
+    </div>
+    <div class="ops-card">
+      <div class="ops-ct"><i class="ti ti-message" aria-hidden="true" style="font-size:15px;margin-right:6px;color:#E31837"></i>Communication</div>
+      <div class="oi"><span class="od"></span><span>All public content: bilingual EN/FR unless specified</span></div>
+      <div class="oi"><span class="od"></span><span>Tone: authoritative, precise, never sensational</span></div>
+      <div class="oi"><span class="od"></span><span>Always include risk disclaimer on all published content</span></div>
+      <div class="oi"><span class="od"></span><span>Track record: update weekly with verified results only</span></div>
+    </div>
+    <div class="ops-card">
+      <div class="ops-ct"><i class="ti ti-adjustments" aria-hidden="true" style="font-size:15px;margin-right:6px;color:#E31837"></i>Bankroll & lines</div>
+      <div class="oi"><span class="od"></span><span>Stake aligned with implied probability, not narrative</span></div>
+      <div class="oi"><span class="od"></span><span>Monitor odds movement pre-match; adjust only where edge expands</span></div>
+      <div class="oi"><span class="od"></span><span>Exit protocol: 2+ consecutive underperforming rounds → pause</span></div>
+      <div class="oi"><span class="od"></span><span>Final Five: consider live in-play hedging if group dynamics shift</span></div>
+    </div>
+  </div>
+  <div class="ops-card" style="margin-top:10px">
+    <div class="ops-ct"><i class="ti ti-world" aria-hidden="true" style="font-size:15px;margin-right:6px;color:#E31837"></i>Website</div>
+    <div class="oi"><span class="od"></span><span>Command center: <a href="https://highstakeshub.xyz/" style="color:#E31837">highstakeshub.xyz</a> — track record, picks, updates, client access. Status: live.</span></div>
+  </div>
+</div>
+
+<div class="disclaimer">
+  <i class="ti ti-alert-circle" aria-hidden="true" style="color:#E31837;font-size:14px;flex-shrink:0;margin-top:1px"></i>
+  <span>Profit with precision — not luck. &nbsp;|&nbsp; Betting involves risk. Past performance does not guarantee future results. Please gamble responsibly. 18+.</span>
+</div>
+
+<script>
+const PR={};
+const LT={};
+const PICKS=['p1','p2','p3','p4','p5','p6','p7','p8','p9','p10','pswi'];
+const LEGS= [4,   2,   3,   2,   4,   4,   3,   4,   4,   3,    1  ];
+
+function setPick2(id,legs,val){
+  if(PR[id]===val)delete PR[id];else PR[id]=val;
+  updateMetrics();
+  const wB=document.getElementById(id+'-w');
+  const lB=document.getElementById(id+'-l');
+  const vB=document.getElementById(id+'-v');
+  const st=document.getElementById(id+'-status');
+  const r=PR[id]||'pending';
+  if(wB){wB.className='rb'+(r==='win'?' win':'');lB.className='rb'+(r==='loss'?' loss':'');if(vB)vB.className='rb'+(r==='void'?' void':'');}
+  if(st){const lbl=id==='pswi'?'Standalone':'legs '+legs;st.textContent=r==='win'?lbl+' · WIN':r==='loss'?lbl+' · LOSS':r==='void'?lbl+' · VOID':lbl+' · Pending';}
+}
+
+function updateMetrics(){
+  let w=0,l=0,pend=0;
+  ['p1','p2','p3','p4','p5','p6','p7','p8','p9','p10'].forEach(id=>{
+    const r=PR[id]||'pending';
+    if(r==='win')w++;else if(r==='loss')l++;else pend++;
+  });
+  document.getElementById('mWins').textContent=w;
+  document.getElementById('mLoss').textContent=l;
+  document.getElementById('mPend').textContent=pend;
+  const s=w+l;
+  document.getElementById('mRate').textContent=s>0?Math.round(w/s*100)+'%':'—';
+  updateLTMetric();
+}
+
+const accuData=[
+  {flag:'🇧🇷',team:'Brazil',odds:'1.15'},{flag:'🇫🇷',team:'France',odds:'1.40'},
+  {flag:'🇦🇷',team:'Argentina',odds:'1.30'},{flag:'🇵🇹',team:'Portugal',odds:'1.40'},
+  {flag:'🏴',team:'England',odds:'1.25'},
+];
+const forecasts=[
+  {g:'B',teams:'Switzerland / Canada',odds:'3.70'},{g:'C',teams:'Brazil / Scotland',odds:'2.45'},
+  {g:'E',teams:'Germany / Ecuador',odds:'2.25'},{g:'H',teams:'Spain / Uruguay',odds:'1.85'},
+  {g:'I',teams:'France / Norway',odds:'1.95'},{g:'J',teams:'Argentina / Austria',odds:'2.60'},
+  {g:'K',teams:'Portugal / Colombia',odds:'1.75'},{g:'L',teams:'England / Croatia',odds:'1.90'},
+];
+const gw=[
+  {g:'C',flag:'🇧🇷',team:'Brazil',odds:'1.15',prob:87},{g:'E',flag:'🇩🇪',team:'Germany',odds:'1.25',prob:80},
+  {g:'F',flag:'🇳🇱',team:'Netherlands',odds:'1.70',prob:58.8},{g:'H',flag:'🇪🇸',team:'Spain',odds:'1.20',prob:83.3},
+  {g:'I',flag:'🇫🇷',team:'France',odds:'1.40',prob:71.4},{g:'J',flag:'🇦🇷',team:'Argentina',odds:'1.30',prob:76.9},
+  {g:'K',flag:'🇵🇹',team:'Portugal',odds:'1.40',prob:71.4},{g:'L',flag:'🏴',team:'England',odds:'1.25',prob:80},
+];
+const f5=[
+  {flag:'🇧🇷',team:'Brazil',group:'C',note:'Clear favorite. Squad depth and tournament pacing align with tight pricing.'},
+  {flag:'🇫🇷',team:'France',group:'I',note:'High rotational capacity. Group opposition lacks structural consistency to challenge top spot.'},
+  {flag:'🇦🇷',team:'Argentina',group:'J',note:'Defending champions with established tactical identity. Low upset probability in group.'},
+  {flag:'🇵🇹',team:'Portugal',group:'K',note:'Technical superiority over group peers. 1.40 reflects a controlled qualification path.'},
+  {flag:'🏴',team:'England',group:'L',note:'Depth, set-piece efficiency, and defensive structure. Unlikely to be disrupted in group stage.'},
+];
+
+function updateLTMetric(){
+  let s=0;if(LT.accu)s++;forecasts.forEach((_,i)=>{if(LT['fc'+i])s++;});
+  document.getElementById('mLT').textContent=(9-s)>0?(9-s)+' open':s+' settled';
+}
+function setAccu(val){if(LT.accu===val)delete LT.accu;else LT.accu=val;updateLTMetric();renderAccu();}
+function setForecast(i,val){const k='fc'+i;if(LT[k]===val)delete LT[k];else LT[k]=val;updateLTMetric();renderForecasts();}
+function setGW(i,val){const k='gw'+i;if(LT[k]===val)delete LT[k];else LT[k]=val;renderGW();}
+
+function renderAccu(){
+  const d=document.getElementById('accuLegs');d.innerHTML='';
+  accuData.forEach(l=>{const s=document.createElement('span');s.className='accu-leg';s.textContent=l.flag+' '+l.team+' ('+l.odds+')';d.appendChild(s);});
+  const r=LT.accu||'pending';
+  document.getElementById('accuW').className='rb'+(r==='win'?' win':'');
+  document.getElementById('accuL').className='rb'+(r==='loss'?' loss':'');
+  document.getElementById('accuStatus').textContent=r==='win'?'Result: WIN — all 5 legs through':r==='loss'?'Result: LOSS':'All 5 legs must win · Settles after round 3';
+}
+function renderForecasts(){
+  const tb=document.getElementById('forecastBody');tb.innerHTML='';
+  forecasts.forEach((f,i)=>{
+    const r=LT['fc'+i]||'pending';const tr=document.createElement('tr');
+    tr.innerHTML=`<td style="font-weight:500">Group ${f.g}</td><td>${f.teams}</td><td><span class="badge b-lt">${f.odds}</span></td><td><div class="rg"><button class="rb ${r==='win'?'win':''}" onclick="setForecast(${i},'win')">W</button><button class="rb ${r==='loss'?'loss':''}" onclick="setForecast(${i},'loss')">L</button></div></td>`;
+    tb.appendChild(tr);
+  });
+}
+function renderGW(){
+  const tb=document.getElementById('gBody');tb.innerHTML='';
+  gw.forEach((g,i)=>{
+    const r=LT['gw'+i]||'pending';const tr=document.createElement('tr');
+    tr.innerHTML=`<td style="font-weight:500">${g.g}</td><td>${g.flag} ${g.team}</td><td style="font-weight:500">${g.odds}</td><td><div class="pb-wrap"><div class="pb-bg"><div class="pb-fill" style="width:${g.prob}%"></div></div><span style="font-size:12px;min-width:38px;text-align:right">${g.prob}%</span></div></td><td><div class="rg"><button class="rb ${r==='win'?'win':''}" onclick="setGW(${i},'win')">W</button><button class="rb ${r==='loss'?'loss':''}" onclick="setGW(${i},'loss')">L</button></div></td>`;
+    tb.appendChild(tr);
+  });
+}
+function renderF5(){
+  const g=document.getElementById('f5Grid');g.innerHTML='';
+  f5.forEach(f=>{const c=document.createElement('div');c.className='five-card';c.innerHTML=`<div style="font-size:26px;margin-bottom:8px">${f.flag}</div><div style="font-size:14px;font-weight:500;color:var(--color-text-primary)">${f.team}</div><div style="font-size:12px;color:var(--color-text-secondary);margin:2px 0 6px">Group ${f.group}</div><div style="font-size:12px;color:var(--color-text-secondary);line-height:1.5">${f.note}</div>`;g.appendChild(c);});
+}
+function switchTab(id,btn){
+  document.querySelectorAll('.pane').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.tb').forEach(b=>b.classList.remove('active'));
+  document.getElementById('pane-'+id).classList.add('active');btn.classList.add('active');
+}
+function switchSub(id,btn){
+  document.querySelectorAll('.subpane').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.stb').forEach(b=>b.classList.remove('active'));
+  document.getElementById('subpane-'+id).classList.add('active');btn.classList.add('active');
+}
+renderAccu();renderForecasts();renderGW();renderF5();updateMetrics();
+</script>
